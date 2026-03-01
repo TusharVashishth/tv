@@ -1,12 +1,12 @@
-import { Hero } from "@/components/features/hero/Hero";
-import { Skills } from "@/components/features/skills/Skills";
-import { YouTube } from "@/components/features/youtube/YouTube";
-import { Projects } from "@/components/features/projects/Projects";
-import { Footer } from "@/components/features/footer/Footer";
+import { Hero } from "@/components/features/landing/Hero";
+import { Skills } from "@/components/features/landing/Skills";
+import { YouTube } from "@/components/features/landing/YouTube";
+import { Projects } from "@/components/features/landing/Projects";
+import { Footer } from "@/components/features/landing/Footer";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-black text-[#eef4ff] overflow-hidden">
+    <main className="min-h-screen bg-background text-foreground overflow-hidden">
       <Hero />
       <Skills />
       <YouTube />

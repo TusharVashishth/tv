@@ -12,6 +12,7 @@
 - TypeScript
 - Tailwind CSS
 - Shadcn UI
+- Magic UI components
 
 ## Code Style
 
