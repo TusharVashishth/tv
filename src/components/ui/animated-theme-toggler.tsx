@@ -1,52 +1,99 @@
-"use client";
+"use client"
 
-import { motion } from "framer-motion";
-import { Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
+import { useCallback, useEffect, useRef, useState } from "react"
+import { Moon, Sun } from "lucide-react"
+import { flushSync } from "react-dom"
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
-interface AnimatedThemeTogglerProps {
-  className?: string;
+interface AnimatedThemeTogglerProps extends React.ComponentPropsWithoutRef<"button"> {
+  duration?: number
 }
 
-export function AnimatedThemeToggler({ className }: AnimatedThemeTogglerProps) {
-  const { resolvedTheme, setTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
+export const AnimatedThemeToggler = ({
+  className,
+  duration = 400,
+  ...props
+}: AnimatedThemeTogglerProps) => {
+  const [isDark, setIsDark] = useState(false)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    const updateTheme = () => {
+      setIsDark(document.documentElement.classList.contains("dark"))
+    }
+
+    updateTheme()
+
+    const observer = new MutationObserver(updateTheme)
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    })
+
+    return () => observer.disconnect()
+  }, [])
+
+  const toggleTheme = useCallback(() => {
+    const button = buttonRef.current
+    if (!button) return
+
+    const { top, left, width, height } = button.getBoundingClientRect()
+    const x = left + width / 2
+    const y = top + height / 2
+    const viewportWidth = window.visualViewport?.width ?? window.innerWidth
+    const viewportHeight = window.visualViewport?.height ?? window.innerHeight
+    const maxRadius = Math.hypot(
+      Math.max(x, viewportWidth - x),
+      Math.max(y, viewportHeight - y)
+    )
+
+    const applyTheme = () => {
+      const newTheme = !isDark
+      setIsDark(newTheme)
+      document.documentElement.classList.toggle("dark")
+      localStorage.setItem("theme", newTheme ? "dark" : "light")
+    }
+
+    if (typeof document.startViewTransition !== "function") {
+      applyTheme()
+      return
+    }
+
+    const transition = document.startViewTransition(() => {
+      flushSync(applyTheme)
+    })
+
+    const ready = transition?.ready
+    if (ready && typeof ready.then === "function") {
+      ready.then(() => {
+        document.documentElement.animate(
+          {
+            clipPath: [
+              `circle(0px at ${x}px ${y}px)`,
+              `circle(${maxRadius}px at ${x}px ${y}px)`,
+            ],
+          },
+          {
+            duration,
+            easing: "ease-in-out",
+            pseudoElement: "::view-transition-new(root)",
+          }
+        )
+      })
+    }
+  }, [isDark, duration])
 
   return (
     <button
       type="button"
-      onClick={() => setTheme(isDark ? "light" : "dark")}
-      aria-label="Toggle theme"
-      className={cn(
-        "relative inline-flex h-10 w-20 items-center rounded-full border border-border bg-muted p-1 transition-colors",
-        className,
-      )}
+      ref={buttonRef}
+      onClick={toggleTheme}
+      className={cn(className)}
+      {...props}
     >
-      <motion.span
-        layout
-        transition={{ type: "spring", stiffness: 500, damping: 30 }}
-        className={cn(
-          "absolute h-8 w-8 rounded-full bg-background shadow-sm",
-          isDark ? "translate-x-10" : "translate-x-0",
-        )}
-      />
-
-      <span className="relative z-10 flex w-full items-center justify-between px-1 text-muted-foreground">
-        <Sun
-          className={cn(
-            "h-4 w-4 transition-opacity",
-            isDark ? "opacity-50" : "opacity-100",
-          )}
-        />
-        <Moon
-          className={cn(
-            "h-4 w-4 transition-opacity",
-            isDark ? "opacity-100" : "opacity-50",
-          )}
-        />
-      </span>
+      {isDark ? <Sun /> : <Moon />}
+      <span className="sr-only">Toggle theme</span>
     </button>
-  );
+  )
 }

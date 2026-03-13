@@ -4,9 +4,9 @@ import { motion } from "framer-motion";
 import { Github, Linkedin, Youtube } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { ThemeToggle } from "@/components/common/theme-toggle";
 import { AuroraText } from "@/components/ui/aurora-text";
 import { Meteors } from "@/components/ui/meteors";
+import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 
 export function Hero() {
   return (
@@ -16,7 +16,7 @@ export function Hero() {
 
         <div className="relative z-10 mb-10 flex items-center justify-between">
           <span className="text-3xl font-black text-primary">TV</span>
-          <ThemeToggle />
+          <AnimatedThemeToggler duration={1000} />
         </div>
 
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 items-center gap-10 lg:gap-14">
