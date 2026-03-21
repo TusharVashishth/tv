@@ -20,14 +20,6 @@ const skills = [
   "Microservices",
 ];
 
-const projects = [
-  "Threads_clone",
-  "Support Agent",
-  "threads_app_clone",
-  "daily-dev-clone",
-  "Devops",
-];
-
 const commandBriefs = [
   { command: "help", description: "Show all available commands" },
   { command: "profile", description: "See Tushar's details" },
@@ -49,6 +41,11 @@ type TerminalLine = {
   tone: "input" | "output" | "accent" | "error";
 };
 
+type PinnedProject = {
+  name: string;
+  description: string;
+};
+
 const fallbackLines = [
   "That command is so secret even I forgot to deploy it.",
   "Command not found. My keyboard says try `help` before we panic.",
@@ -57,6 +54,7 @@ const fallbackLines = [
 ];
 
 export function Skills() {
+  const [projects, setProjects] = useState<PinnedProject[]>([]);
   const [terminalLines, setTerminalLines] = useState<TerminalLine[]>([]);
   const [streamQueue, setStreamQueue] = useState<TerminalLine[]>([]);
   const [activeLine, setActiveLine] = useState<TerminalLine | null>(null);
@@ -86,6 +84,32 @@ export function Skills() {
       })),
     ]);
   };
+
+  const projectCommandLines = useMemo<Omit<TerminalLine, "id">[]>(() => {
+    if (projects.length === 0) {
+      return [
+        {
+          tone: "accent",
+          text: "Highlighted projects:",
+        },
+        {
+          tone: "output",
+          text: "Syncing pinned repositories from GitHub...",
+        },
+      ];
+    }
+
+    return [
+      {
+        tone: "accent",
+        text: "Highlighted projects:",
+      },
+      ...projects.map((project) => ({
+        tone: "output" as const,
+        text: `→ ${project.name}${project.description ? ` — ${project.description}` : ""}`,
+      })),
+    ];
+  }, [projects]);
 
   const runCommand = (commandValue: string): Omit<TerminalLine, "id">[] => {
     const normalized = commandValue.trim().toLowerCase();
@@ -134,16 +158,7 @@ export function Skills() {
     }
 
     if (normalized === "projects") {
-      return [
-        {
-          tone: "accent",
-          text: "Highlighted projects:",
-        },
-        ...projects.map((project) => ({
-          tone: "output" as const,
-          text: `→ ${project}`,
-        })),
-      ];
+      return projectCommandLines;
     }
 
     if (
@@ -297,6 +312,36 @@ export function Skills() {
     const words = activeLine.text.split(" ");
     return words.slice(0, activeWordCount).join(" ");
   }, [activeLine, activeWordCount]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const loadProjects = async () => {
+      try {
+        const response = await fetch("/api/projects", {
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          return;
+        }
+
+        const data = (await response.json()) as {
+          projects?: PinnedProject[];
+        };
+
+        setProjects(data.projects ?? []);
+      } catch {
+        /** COMMENT: Keep the terminal responsive if project sync fails. */
+      }
+    };
+
+    void loadProjects();
+
+    return () => {
+      controller.abort();
+    };
+  }, []);
 
   useEffect(() => {
     if (hasBootedRef.current) {
