@@ -245,7 +245,7 @@ export function Skills() {
         },
         {
           tone: "output",
-          text: "Grew codingWithTushar YouTube channel to 10,755+ subscribers.",
+          text: "Grew tushar.vashishth YouTube channel to 11,000+ subscribers.",
         },
       ];
     }
