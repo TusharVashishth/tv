@@ -36,7 +36,7 @@ export function Footer() {
                 <Linkedin className="w-5 h-5" />
               </Link>
               <Link
-                href="https://www.youtube.com/@codingWithTushar"
+                href="https://www.youtube.com/@tushar.vashishth"
                 target="_blank"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
@@ -98,12 +98,12 @@ export function Footer() {
                 <MapPin className="w-4 h-4" /> Greater Noida, India
               </div>
               <a
-                href="https://www.youtube.com/@codingWithTushar"
+                href="https://www.youtube.com/@tushar.vashishth"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                <Youtube className="w-4 h-4" /> codingWithTushar
+                <Youtube className="w-4 h-4" /> tushar.vashishth
               </a>
             </div>
           </div>
@@ -112,7 +112,7 @@ export function Footer() {
         <div className="h-px w-full bg-border mb-12"></div>
 
         <div className="relative flex justify-center items-center mb-10 select-none overflow-hidden">
-          <h1 className="text-[10vw] md:text-[8vw] lg:text-[6vw] font-black leading-none text-primary/10 dark:text-primary/20 tracking-tighter whitespace-nowrap">
+          <h1 className="text-[8vw] md:text-[8vw] lg:text-[6vw] font-black leading-none text-primary/10 dark:text-primary/20 tracking-tighter whitespace-nowrap">
             TUSHAR VASHISHTH
           </h1>
           <div className="absolute inset-0 bg-linear-to-t from-background via-transparent to-transparent"></div>

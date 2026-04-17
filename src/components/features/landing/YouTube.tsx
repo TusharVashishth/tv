@@ -50,7 +50,7 @@ export async function YouTube() {
           <p className="text-muted-foreground max-w-2xl text-lg">
             Fresh uploads from{" "}
             <span className="text-foreground font-semibold">
-              codingWithTushar
+              tushar.vashishth
             </span>
             .
           </p>
@@ -61,7 +61,7 @@ export async function YouTube() {
             Subscribers
           </p>
           <p className="text-3xl font-bold text-foreground mt-1">
-            <NumberTicker value={10755} />+
+            <NumberTicker value={11000} />+
           </p>
         </div>
       </div>

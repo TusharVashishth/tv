@@ -64,7 +64,7 @@ export function Hero() {
                 <Linkedin className="w-8 h-8" />
               </Link>
               <Link
-                href="https://youtube.com/@codingwithtushar?si=ixmhhl3LzPBt-L1v"
+                href="https://youtube.com/@tushar.vashishth?si=wiAc4MRDNgnpbThL"
                 target="_blank"
                 className="transition-colors hover:text-foreground"
               >

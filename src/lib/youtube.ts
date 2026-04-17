@@ -24,21 +24,21 @@ export const fallbackVideos = [
         title: "Build a Fullstack Next.js App from Scratch",
         thumbnail:
             "https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=800&auto=format&fit=crop",
-        url: "https://www.youtube.com/@codingWithTushar",
+        url: "https://www.youtube.com/@tushar.vashishth",
     },
     {
         id: "2",
         title: "Mastering Node.js Microservices",
         thumbnail:
             "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop",
-        url: "https://www.youtube.com/@codingWithTushar",
+        url: "https://www.youtube.com/@tushar.vashishth",
     },
     {
         id: "3",
         title: "Deploying AWS Lambda with Serverless Framework",
         thumbnail:
             "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop",
-        url: "https://www.youtube.com/@codingWithTushar",
+        url: "https://www.youtube.com/@tushar.vashishth",
     },
 ];
 
@@ -180,7 +180,7 @@ export function parseYouTubeChannelPage(html: string): VideoItem[] {
 export async function getLatestVideos(): Promise<VideoItem[]> {
     try {
         const response = await fetch(
-            "https://www.youtube.com/@codingWithTushar/videos",
+            "https://www.youtube.com/@tushar.vashishth/videos",
             {
                 headers: {
                     "Accept-Language": "en-US,en;q=0.9",

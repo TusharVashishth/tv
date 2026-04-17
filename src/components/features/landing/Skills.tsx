@@ -211,7 +211,7 @@ export function Skills() {
         },
         {
           tone: "output",
-          text: "YouTube: youtube.com/@codingWithTushar",
+          text: "YouTube: youtube.com/@tushar.vashishth",
         },
       ];
     }
