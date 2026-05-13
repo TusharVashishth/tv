@@ -5,17 +5,15 @@ export type VideoItem = {
     url: string;
 };
 
-export type TextRenderer =
-    | {
-        simpleText?: string;
-        runs?: Array<{ text?: string }>;
-    }
-    | undefined;
+// ***** client-safe fetch — calls the internal API route *****
+export async function fetchLatestVideos(): Promise<VideoItem[]> {
+    const response = await fetch("/api/youtube");
 
-export type YouTubeVideoRenderer = {
-    videoId?: string;
-    title?: TextRenderer;
-};
+    if (!response.ok) return fallbackVideos;
+
+    const data: { videos: VideoItem[] } = await response.json();
+    return data.videos?.length > 0 ? data.videos : fallbackVideos;
+}
 
 
 export const fallbackVideos = [
@@ -43,158 +41,76 @@ export const fallbackVideos = [
 ];
 
 
-export function getTextContent(textRenderer: TextRenderer): string {
-    if (!textRenderer) {
-        return "";
-    }
+type ChannelApiResponse = {
+    items?: Array<{
+        contentDetails?: {
+            relatedPlaylists?: { uploads?: string };
+        };
+    }>;
+};
 
-    if (textRenderer.simpleText) {
-        return textRenderer.simpleText.trim();
-    }
-
-    return (
-        textRenderer.runs
-            ?.map((run) => run.text ?? "")
-            .join("")
-            .trim() ?? ""
-    );
-}
-
-export function extractInitialData(html: string): unknown {
-    const marker = "var ytInitialData = ";
-    const start = html.indexOf(marker);
-
-    if (start === -1) {
-        return null;
-    }
-
-    let cursor = html.indexOf("{", start);
-
-    if (cursor === -1) {
-        return null;
-    }
-
-    let depth = 0;
-    let inString = false;
-    let isEscaped = false;
-    const jsonStart = cursor;
-
-    for (; cursor < html.length; cursor += 1) {
-        const character = html[cursor];
-
-        if (inString) {
-            if (isEscaped) {
-                isEscaped = false;
-                continue;
-            }
-
-            if (character === "\\") {
-                isEscaped = true;
-                continue;
-            }
-
-            if (character === '"') {
-                inString = false;
-            }
-
-            continue;
-        }
-
-        if (character === '"') {
-            inString = true;
-            continue;
-        }
-
-        if (character === "{") {
-            depth += 1;
-            continue;
-        }
-
-        if (character === "}") {
-            depth -= 1;
-
-            if (depth === 0) {
-                const json = html.slice(jsonStart, cursor + 1);
-                return JSON.parse(json);
-            }
-        }
-    }
-
-    return null;
-}
-
-export function collectVideoRenderers(node: unknown, videos: YouTubeVideoRenderer[]) {
-    if (!node || typeof node !== "object") {
-        return;
-    }
-
-    if (Array.isArray(node)) {
-        node.forEach((item) => collectVideoRenderers(item, videos));
-        return;
-    }
-
-    if ("videoRenderer" in node) {
-        const videoRenderer = (node as { videoRenderer?: YouTubeVideoRenderer })
-            .videoRenderer;
-
-        if (videoRenderer) {
-            videos.push(videoRenderer);
-        }
-    }
-
-    Object.values(node).forEach((value) => collectVideoRenderers(value, videos));
-}
-
-export function parseYouTubeChannelPage(html: string): VideoItem[] {
-    const initialData = extractInitialData(html);
-
-    if (!initialData) {
-        return [];
-    }
-
-    const videoRenderers: YouTubeVideoRenderer[] = [];
-    const seenVideoIds = new Set<string>();
-    collectVideoRenderers(initialData, videoRenderers);
-
-    return videoRenderers
-        .map((video) => {
-            const videoId = video.videoId ?? "";
-            const title = getTextContent(video.title);
-
-            if (!videoId || !title || seenVideoIds.has(videoId)) {
-                return null;
-            }
-
-            seenVideoIds.add(videoId);
-
-            return {
-                id: videoId,
-                title,
-                thumbnail: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
-                url: `https://www.youtube.com/watch?v=${videoId}`,
+type PlaylistApiResponse = {
+    items?: Array<{
+        snippet?: {
+            title?: string;
+            resourceId?: { videoId?: string };
+            thumbnails?: {
+                high?: { url?: string };
+                medium?: { url?: string };
+                default?: { url?: string };
             };
-        })
-        .filter((video): video is VideoItem => Boolean(video));
+        };
+    }>;
+};
+
+// ***** fetch the uploads playlist ID for @tushar.vashishth (cached 24h) *****
+async function getUploadsPlaylistId(apiKey: string): Promise<string | null> {
+    const url = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&forHandle=tushar.vashishth&key=${apiKey}`;
+    const response = await fetch(url, { next: { revalidate: 86400 } });
+
+    if (!response.ok) return null;
+
+    const data: ChannelApiResponse = await response.json();
+    return data.items?.[0]?.contentDetails?.relatedPlaylists?.uploads ?? null;
 }
 
 export async function getLatestVideos(): Promise<VideoItem[]> {
+    const apiKey = process.env.YOUTUBE_API_KEY;
+
+    if (!apiKey) return fallbackVideos;
+
     try {
-        const response = await fetch(
-            "https://www.youtube.com/@tushar.vashishth/videos",
-            {
-                headers: {
-                    "Accept-Language": "en-US,en;q=0.9",
-                },
-                next: { revalidate: 900 },
-            },
-        );
+        const playlistId = await getUploadsPlaylistId(apiKey);
 
-        if (!response.ok) {
-            return fallbackVideos;
-        }
+        if (!playlistId) return fallbackVideos;
 
-        const html = await response.text();
-        const videos = parseYouTubeChannelPage(html).slice(0, 8);
+        const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${playlistId}&maxResults=8&key=${apiKey}`;
+        const response = await fetch(url, { next: { revalidate: 900 } });
+
+        if (!response.ok) return fallbackVideos;
+
+        const data: PlaylistApiResponse = await response.json();
+
+        const videos: VideoItem[] = (data.items ?? [])
+            .map((item) => {
+                const snippet = item.snippet;
+                const videoId = snippet?.resourceId?.videoId;
+                const title = snippet?.title;
+
+                if (!videoId || !title) return null;
+
+                return {
+                    id: videoId,
+                    title,
+                    thumbnail:
+                        snippet?.thumbnails?.high?.url ??
+                        snippet?.thumbnails?.medium?.url ??
+                        `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+                    url: `https://www.youtube.com/watch?v=${videoId}`,
+                };
+            })
+            .filter((v): v is VideoItem => Boolean(v));
+
         return videos.length > 0 ? videos : fallbackVideos;
     } catch {
         return fallbackVideos;

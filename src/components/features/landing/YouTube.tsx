@@ -1,14 +1,22 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Play, Youtube as YoutubeIcon } from "lucide-react";
 import Link from "next/link";
 import { Marquee } from "@/components/ui/marquee";
 import { NumberTicker } from "@/components/ui/number-ticker";
 import Image from "next/image";
-import { getLatestVideos, VideoItem } from "@/lib/youtube";
+import { fetchLatestVideos, fallbackVideos, VideoItem } from "@/lib/youtube";
 
-export async function YouTube() {
-  const recentVideos = await getLatestVideos();
-  const topRow = recentVideos.filter((_, index) => index % 2 === 0);
-  const bottomRowSource = recentVideos.filter((_, index) => index % 2 !== 0);
+export function YouTube() {
+  const [videos, setVideos] = useState<VideoItem[]>(fallbackVideos);
+
+  useEffect(() => {
+    fetchLatestVideos().then(setVideos);
+  }, []);
+
+  const topRow = videos.filter((_, index) => index % 2 === 0);
+  const bottomRowSource = videos.filter((_, index) => index % 2 !== 0);
   const bottomRow = bottomRowSource.length > 0 ? bottomRowSource : topRow;
 
   const renderCard = (video: VideoItem) => (
