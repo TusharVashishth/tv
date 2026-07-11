@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Tushar Vashishth | Portfolio",
   description:
-    "Portfolio website showcasing skills, projects, and content by Tushar Vashishth.",
+    "Lead Engineer and Tech Lead with 7+ years building scalable fintech payment, lending, and insurance platforms using Node.js, Next.js, AWS, and AI.",
 };
 
 export default function RootLayout({

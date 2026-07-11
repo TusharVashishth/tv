@@ -17,8 +17,8 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              Tech Lead building secure and scalable products with Next.js,
-              Node.js, AWS, and modern cloud architecture.
+              Lead Engineer with 7+ years building scalable fintech products,
+              payment systems, and distributed platforms on AWS.
             </p>
             <div className="flex gap-4">
               <Link
@@ -78,10 +78,10 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="font-semibold text-lg">Focus Areas</h3>
             <div className="flex flex-col gap-2 text-sm text-muted-foreground">
-              <span>System Design</span>
-              <span>Cloud Architecture (AWS)</span>
-              <span>Next.js & Node.js</span>
-              <span>Fintech & AI Solutions</span>
+              <span>Fintech Payments & Aggregators</span>
+              <span>Distributed Systems on AWS</span>
+              <span>Cloud Cost Optimization</span>
+              <span>Generative AI Integrations</span>
             </div>
           </div>
 
@@ -95,7 +95,7 @@ export function Footer() {
                 <Mail className="w-4 h-4" /> tusharvashisth4@gmail.com
               </a>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <MapPin className="w-4 h-4" /> Greater Noida, India
+                <MapPin className="w-4 h-4" /> Noida, Uttar Pradesh, India
               </div>
               <a
                 href="https://www.youtube.com/@tushar.vashishth"

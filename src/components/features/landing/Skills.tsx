@@ -6,18 +6,28 @@ import { Marquee } from "@/components/ui/marquee";
 import { ShineBorder } from "../../ui/shine-border";
 
 const skills = [
+  "JavaScript",
+  "TypeScript",
   "Node.js",
   "Next.js",
-  "TypeScript",
+  "React",
+  "SQL",
+  "Python",
+  "PHP",
   "AWS",
+  "Kubernetes",
   "Docker",
+  "MySQL",
   "PostgreSQL",
   "Redis",
+  "Vector DB",
   "GraphQL",
+  "Prisma",
+  "Tailwind CSS",
   "Generative AI",
-  "System Design",
+  "RAG / LLMs",
   "CI/CD",
-  "Microservices",
+  "System Design",
 ];
 
 const commandBriefs = [
@@ -135,11 +145,11 @@ export function Skills() {
       return [
         {
           tone: "accent",
-          text: "Tushar Vashishth — Tech Lead & Full-Stack Engineer",
+          text: "Tushar Vashishth — Lead Engineer & Tech Lead",
         },
         {
           tone: "output",
-          text: "He builds secure, high-performance systems with Node.js, Next.js, AWS, and AI workflows.",
+          text: "7+ years building scalable fintech payment, lending, and insurance aggregation products.",
         },
       ];
     }
@@ -173,11 +183,11 @@ export function Skills() {
         },
         {
           tone: "output",
-          text: "Tech Lead focused on scalable product architecture and reliability-first engineering.",
+          text: "Lead Engineer at CreditMitra: built multi-provider loan and insurance aggregator workflows.",
         },
         {
           tone: "output",
-          text: "Hands-on leadership across full-stack delivery, cloud systems, and DevOps execution.",
+          text: "Ex-Tech Lead at Payomatix: 1M+ daily transactions, 99.99% uptime, and 30% infra cost reduction.",
         },
       ];
     }
@@ -190,7 +200,7 @@ export function Skills() {
         },
         {
           tone: "output",
-          text: "• System Design • Cloud Architecture (AWS) • Next.js & Node.js • Fintech & AI Solutions",
+          text: "• Fintech Platforms • Distributed Systems • AWS Cost Optimization • Generative AI Solutions",
         },
       ];
     }
@@ -228,7 +238,7 @@ export function Skills() {
         },
         {
           tone: "output",
-          text: "Location: Greater Noida, India",
+          text: "Location: Noida, Uttar Pradesh, India",
         },
       ];
     }
@@ -241,11 +251,11 @@ export function Skills() {
         },
         {
           tone: "output",
-          text: "Built and shipped high-scale systems handling millions of monthly transactions.",
+          text: "Reduced AWS infrastructure cost by 25-40% through architecture and resource optimization.",
         },
         {
           tone: "output",
-          text: "Grew tushar.vashishth YouTube channel to 11,000+ subscribers.",
+          text: "Built an AI support bot that reduced support queries by 40% while improving resolution quality.",
         },
       ];
     }

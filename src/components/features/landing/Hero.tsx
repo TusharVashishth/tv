@@ -39,13 +39,14 @@ export function Hero() {
             </h1>
 
             <h2 className="text-2xl md:text-3xl font-semibold leading-tight">
-              Tech Lead & Full-Stack Engineer
+              Lead Engineer & Tech Lead (Fintech)
             </h2>
 
             <p className="text-muted-foreground leading-relaxed max-w-xl mx-auto lg:mx-0">
-              I architect secure, high-performance systems with Node.js,
-              Next.js, AWS, and AI workflows—shipping products that scale to
-              millions of monthly transactions with reliability first.
+              Software engineer with 7+ years building fintech payment systems,
+              lending platforms, and insurance aggregators. I design
+              high-performance distributed products with Node.js, Next.js,
+              TypeScript, AWS, and AI workflows.
             </p>
 
             <div className="flex items-center justify-center lg:justify-start gap-4 text-muted-foreground">
